@@ -1,4 +1,23 @@
 module Main where
+import Web.Scotty     (ActionM, scotty, get, post, liftAndCatchIO,
+                                    json, rescue, html, param, jsonData)
+import Data.Aeson.Types
+import Process
+import TxtMessage
+import Data.Text.Lazy
 
+
+-- the program will recivie a json object, parse it and then it will process it
 main :: IO ()
-main = putStrLn "Hello, Haskell!"
+main = scotty 3000 $ do
+    get "/" serve
+    post "/" serve
+  where
+    serve :: ActionM ()
+    serve = do
+      rslt <- jsonData :: ActionM TxtMessage
+      (liftAndCatchIO $ do
+                          r <- runProcess rslt
+                          putStrLn $ show r
+                          return r
+                          ) >>= \x -> json x
