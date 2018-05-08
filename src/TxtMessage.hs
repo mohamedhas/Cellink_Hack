@@ -40,8 +40,8 @@ instance FromJSON NLP where
         <*> v .: "timestamp"
         <*> v .: "lang"
         <*> v .: "result"
-        <*> v .: "sessionId"
         <*> v .: "status"
+        <*> v .: "sessionId"
 
 data Result = Result {
   source :: String,

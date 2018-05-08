@@ -9,6 +9,10 @@ import Data.Text.Lazy
 import Http
 import Network.HTTP.Simple as S
 import qualified Data.ByteString.Char8 as B8
+import Data.List
+import Text.Regex
+import System.IO
+import Text.Regex.Base.RegexLike
 
 -- the program will recivie a json object, parse it and then it will process it
 url   = "https://api.dialogflow.com/v1/query?v=20150910"
@@ -22,6 +26,14 @@ data MsgResponse = MsgResponse {
 process :: String -> MsgResponse
 process "assistant" = MsgResponse {flag = True, msg = "Hello"}
 
+regex = mkRegex "(intentName.*?)"
+regex2 = mkRegex "intentName\": .*\""
+
+
+
+--getIntentName :: String -> String
+--getIntentName str =
+
 main :: IO ()
 main = scotty 3000 $ do
     get "/" serve
@@ -33,4 +45,4 @@ main = scotty 3000 $ do
       liftAndCatchIO $ putStrLn $ show rslt
       liftAndCatchIO $ do
           response <- postR url (toJSON $ diagTempalte $ speech rslt) token
-          B8.putStrLn $ getResponseBody response
+          putStrLn $ show $ TxtMessage.id $ getResponseBody response
